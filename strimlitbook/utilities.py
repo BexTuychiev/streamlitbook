@@ -5,7 +5,7 @@ A module that contains utility functions.
 import base64
 from PIL import Image
 import io
-
+import re
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -112,3 +112,43 @@ def _display_vega_lite(vega_lite_spec: dict):
     """
 
     st.vega_lite_chart(spec=vega_lite_spec)
+
+
+def get_image_paths(markdown_code: str):
+    """
+    Return all image paths from Markdown code - both MD and HTML versions
+
+    Parameters
+    ----------
+    markdown_code : str
+        Markdown code from a Jupyter cell
+
+    Returns
+    -------
+    image_paths : list
+        List of image paths
+    """
+    # The ReGeX taken from jupyter-to-medium library by dexplo
+    pattern_inline = r"\!\[.*?\]\((.*?\.(?:gif|png|jpg|jpeg|tiff|svg))"
+    pattern_ref = r"\[.*?\]:\s*(.*?\.(?:gif|png|jpg|jpeg|tiff|svg))"
+    pat_img_tag = r"""(<img.*?[sS][rR][Cc]\s*=\s*['"](.*?)['"].*?/>)"""
+
+    # Get all regular image paths
+    image_paths = re.findall(pattern_inline, markdown_code) + \
+                  re.findall(pattern_ref, markdown_code)
+    # Get all HTML img tag paths
+    tag_paths = re.findall(pat_img_tag, markdown_code)
+    image_paths += [tag[1] for tag in tag_paths]
+
+    parsed_paths = list()
+
+    for path in image_paths:
+        p = path.strip()
+        is_http = p.startswith("http")
+        is_attachment = p.startswith("attachment")
+        if is_http or is_attachment:
+            continue
+        else:
+            parsed_paths.append(p)
+
+    return parsed_paths
