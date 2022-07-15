@@ -202,6 +202,13 @@ class Markdown(Cell):
         # Add an attribute for raw attachments
         self._raw_attachments = cell_dict.get('attachments', None)
 
+    def _replace_inline_images(self):
+        """
+        A method to replace HTML or Markdown code that references image paths with
+        base64 decoded images.
+        """
+        pass
+
     @property
     def _attachments(self):
         """
