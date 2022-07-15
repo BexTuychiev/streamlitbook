@@ -25,4 +25,7 @@ def read_ipynb(path: str) -> StreamlitBook:
     with open(path, "rb") as file:
         raw_dict = json.load(file)
 
+    # Add the path to the notebook to raw_dict
+    raw_dict['metadata']["path"] = path
+
     return StreamlitBook(raw_dict['cells'], raw_dict['metadata'])
