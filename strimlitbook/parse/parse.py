@@ -48,6 +48,10 @@ class StreamlitBook:
         self._cell_dict = cells
         self._n_cells = len(self._cells)
 
+        # Add the notebook path to all cell metadata
+        for cell in self._cell_dict:
+            cell['metadata']['path'] = self._metadata['path']
+
     @property
     def cells(self):
         return self._cells
